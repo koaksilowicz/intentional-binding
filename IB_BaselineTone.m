@@ -21,13 +21,14 @@ blocknumber=input('Please enter block number  ', 's');
 filename=[blocknumber, 'baselineTone'];
 
 if blocknumber(1)=='p'
-    numtrials=10;
-else numtrials=20;
+    numtrials=5;
+else numtrials=5;
 end
 
 % initializing PTB screen
-Screen('Preference', 'VisualDebuglevel', 0);
-[won, rect_window]=Screen('OpenWindow',0, colourbackground, ScreenSizeInPixels);
+
+Screen('Preference', 'SkipSyncTests', 1);
+[won, rect_window]=Screen('OpenWindow', 0, colourbackground, ScreenSizeInPixels);
 flipInterval=Screen('GetFlipInterval', won);
 HideCursor;
 
@@ -85,7 +86,7 @@ k=1;
 while k<=numtrials
     
     priorityLevel=MaxPriority(won, 'FlushEvents', 'KbCheck');
-    Priority=PriorityLevel;
+    Priority=priorityLevel;
     
     
     DrawFormattedText(won, 'Get ready to begin the next trial...', 'center', 'center');
@@ -158,7 +159,8 @@ while k<=numtrials
     % if subjects enter 99, it means they didn't hear a tone
     if estimate==99
         error=NaN;
-    else error=estimate-clockNumberPressed;
+    else error=estimate-clockNumberEvent
+;
     end
     
     if error>45
@@ -203,9 +205,11 @@ commandwindow;
 clc;
 
 %% creating data files %%
-warning off MATLAB:xlswrite:AddSheet;
-status1=xlswrite(subject, Results, filename);
-if (status1==1)
-     disp('creating dat file was successfully completed')
-else disp('!!!!!error occurred in creating dat file!!!!!!')
-end
+% warning off MATLAB:xlswrite:AddSheet;
+% filename = [blocknumber, 'baselineTone']
+% status1=xlswrite(filename, Results, filename);
+% if (status1==1)
+%      disp('creating dat file was successfully completed')
+% else disp('!!!!!error occurred in creating dat file!!!!!!')
+% end
+csvwrite([subject,filename, '.csv'], Results);

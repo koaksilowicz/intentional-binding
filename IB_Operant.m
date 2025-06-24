@@ -19,18 +19,19 @@ commandwindow;
 subject=input('Please enter subject number  ', 's');
 blocknumber=input('Please enter block number  ', 's');
 % filename=[blocknumber, 'operantTone'];
-filename=[blocknumber, 'operantAction'];
+filename=[blocknumber,'operantAction'];
 
 if blocknumber(1)=='p'
-    numtrials=12;
-else numtrials=30;
+    numtrials=5;
+else numtrials=5;
 end
 
 % initializing PTB screen
-Screen('Preference', 'VisualDebuglevel', 0);
-[won, rect_window]=Screen('OpenWindow',0, colourbackground, ScreenSizeInPixels);
+Screen('Preference', 'SkipSyncTests', 1);
+[won, rect_window]=Screen('OpenWindow', 0, colourbackground, ScreenSizeInPixels);
 flipInterval=Screen('GetFlipInterval', won);
 HideCursor;
+
 
 % initializing text config
 Screen('TextSize',won,24);
@@ -169,26 +170,49 @@ while k<=numtrials
     periodsCompleted=thetaPressed/(2*pi);
     
     %% response
-    t0=GetSecs;
-    response=Ask(won,'Enter estimated clock time  ',[],[],'GetChar',rectmessage,'center', 24);
-    RT2=GetSecs-t0;
-    
-    estimate=str2double(response);
-    % if subjects enter 99, it means they didn't hear a tone
-    if estimate==99
-        error=NaN;
-    else error=estimate-clockNumberPressed;
-    end
-    
-    if error>45
-        error=error-60;
-    elseif error<-45
-        error = error+60;
-    end
-    
-    % converting to ms
-    conversionFactor=1000*T/60;
-    errorInMs=error*conversionFactor;
+t0 = GetSecs;
+response = Ask(won, 'Enter estimated clock time of your button press: ', [], [], 'GetChar', rectmessage, 'center', 24);
+RT2 = GetSecs - t0;
+
+estimate = str2double(response);
+if estimate == 99
+    error = NaN;
+else
+    error = estimate - clockNumberPressed;
+end
+if error > 45
+    error = error - 60;
+elseif error < -45
+    error = error + 60;
+end
+conversionFactor = 1000 * T / 60;
+errorInMs = error * conversionFactor;
+
+%% оценка времени звука
+% Сохраняем положение стрелки в момент звука:
+thetaTone = theta;  % стрелка к моменту звука
+factorTone = mod(thetaTone, 2*pi) / (2*pi);
+clockNumberTone = 15 + factorTone * 60;
+if clockNumberTone > 60
+    clockNumberTone = clockNumberTone - 60;
+end
+
+t0 = GetSecs;
+responseTone = Ask(won, 'Enter estimated clock time of the beep: ', [], [], 'GetChar', rectmessage, 'center', 24);
+RT3 = GetSecs - t0;
+
+estimateTone = str2double(responseTone);
+if estimateTone == 99
+    errorTone = NaN;
+else
+    errorTone = estimateTone - clockNumberTone;
+end
+if errorTone > 45
+    errorTone = errorTone - 60;
+elseif errorTone < -45
+    errorTone = errorTone + 60;
+end
+errorToneInMs = errorTone * conversionFactor;
     
     % warn if taking too long
     
@@ -225,6 +249,11 @@ while k<=numtrials
     Results(k,10)=warn;
     Results(k,11)=error;
     Results(k,12)=errorInMs;
+    Results(k,13) = clockNumberTone;
+Results(k,14) = estimateTone;
+Results(k,15) = RT3;
+Results(k,16) = errorTone;
+Results(k,17) = errorToneInMs;
     
     
     Priority=0;

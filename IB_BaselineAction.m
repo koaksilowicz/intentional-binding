@@ -21,13 +21,14 @@ blocknumber=input('Please enter block number  ', 's');
 filename=[blocknumber, 'baselineAction'];
 
 if blocknumber(1)=='p'
-    numtrials=9;
-else numtrials=30;
+    numtrials=5;
+else numtrials=5;
 end
 
 % initializing PTB screen
-Screen('Preference', 'VisualDebuglevel', 0);
-[won, rect_window]=Screen('OpenWindow',0, colourbackground, ScreenSizeInPixels);
+
+Screen('Preference', 'SkipSyncTests', 1);
+[won, rect_window]=Screen('OpenWindow', 0, colourbackground, ScreenSizeInPixels);
 flipInterval=Screen('GetFlipInterval', won);
 HideCursor;
 
@@ -41,16 +42,16 @@ window_x=rect_window(3);
 window_y=rect_window(4);
 rectmessage=[window_x/2-100, window_y/2+50, window_x/2+100, window_y/2+100];
 
-% setting up conditions matrix
-numconditions=1:3;
-stimulipercondition=numtrials/length(numconditions);
-% conditions=[];
-% for i=1:stimulipercondition
-%     conditions=[conditions, randperm(max(numconditions))];
-% end
-
-conditions=repmat(numconditions,1,stimulipercondition);
-conditions=Shuffle(Shuffle(conditions));
+% % setting up conditions matrix
+% numconditions=1:3;
+% stimulipercondition=numtrials/length(numconditions);
+% % conditions=[];
+% % for i=1:stimulipercondition
+% %     conditions=[conditions, randperm(max(numconditions))];
+% % end
+% 
+% conditions=repmat(numconditions,1,stimulipercondition);
+% conditions=Shuffle(Shuffle(conditions));
 
 % random interval between 1.5 to 2.5 secs between event judged and hand stopping
 randInterval=RandLim(numtrials,1.5,2.5);
@@ -201,7 +202,7 @@ while k<=numtrials
     Results(k,7)=startingPosition;
     Results(k,8)=thetaPressed;
     Results(k,9)=periodsCompleted;
-    Results(k,10)=conditions(k);
+    Results(k,10)=NaN;
     Results(k,11)=warn;
     Results(k,12)=error;
     Results(k,13)=errorInMs;
@@ -219,9 +220,10 @@ commandwindow;
 clc;
 
 %% creating data files %%
-warning off MATLAB:xlswrite:AddSheet;
-status1=xlswrite(subject, Results, filename);
-if (status1==1)
-     disp('creating dat file was successfully completed')
-else disp('!!!!!error occurred in creating dat file!!!!!!')
-end
+% warning off MATLAB:xlswrite:AddSheet;
+% status1=xlswrite(filename, Results, filename);
+% if (status1==1)
+%      disp('creating dat file was successfully completed')
+% else disp('!!!!!error occurred in creating dat file!!!!!!')
+% end
+csvwrite([subject,filename, '.csv'], Results);
