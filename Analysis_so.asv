@@ -1,11 +1,16 @@
-% Путь к папке
+% Here is the very basic code to look fast on the results. If you have
+% enough participants and data you can try to make ttests using IB time.
+% 
+% Written by Tana S. 23/06/2025
+
+% 
 dataPath = 'C:\Users\tanso\Nextcloud\Home-Cloud\Masters\Summer_semester_2025\Neurocognition\intentional-binding\';
 
 % Файлы
-file_BA         = fullfile(dataPath, '31baselineAction.csv');
-file_BT         = fullfile(dataPath, '31baselineTone.csv');
-file_OA_self    = fullfile(dataPath, '21operantAction.csv');   % self-generated
-file_OA_other   = fullfile(dataPath, '22operantAction.csv');   % other-generated
+file_BA         = fullfile(dataPath, '41baselineAction.csv');
+file_BT         = fullfile(dataPath, '41baselineTone.csv');
+file_OA_self    = fullfile(dataPath, '41operantAction.csv');   % self-generated
+file_OA_other   = fullfile(dataPath, '42operantAction.csv');   % other-generated
 
 % Загрузка данных 
 BA = readmatrix(file_BA);

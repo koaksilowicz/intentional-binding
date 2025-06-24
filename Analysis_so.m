@@ -1,55 +1,58 @@
-% Путь к папке
+% Here is the very basic code to look fast on the results. If you have
+% enough participants and data you can try to make ttests using IB time.
+% 
+% Written by Tana S. 23/06/2025
+
+% Change here for your path
 dataPath = 'C:\Users\tanso\Nextcloud\Home-Cloud\Masters\Summer_semester_2025\Neurocognition\intentional-binding\';
 
-% Файлы
+% Files
 file_BA         = fullfile(dataPath, '41baselineAction.csv');
 file_BT         = fullfile(dataPath, '41baselineTone.csv');
 file_OA_self    = fullfile(dataPath, '41operantAction.csv');   % self-generated
 file_OA_other   = fullfile(dataPath, '42operantAction.csv');   % other-generated
 
-% Загрузка данных 
+% Load your data
 BA = readmatrix(file_BA);
 BT = readmatrix(file_BT);
 OA_self  = readmatrix(file_OA_self);
 OA_other = readmatrix(file_OA_other);
 
-%Извлечение ошибок (errorInMs)
+% Get error values (errorInMs)
 BA_errors = BA(:, end);             % baseline action
 BT_errors = BT(:, end);             % baseline tone
 OA_self_action_errors  = OA_self(:, 12);
 OA_self_tone_errors    = OA_self(:, 17);
 OA_other_action_errors = OA_other(:, 12);
 
-%Очистка NaN
+% clear NaNs
 BA_errors = BA_errors(~isnan(BA_errors));
 BT_errors = BT_errors(~isnan(BT_errors));
 OA_self_action_errors  = OA_self_action_errors(~isnan(OA_self_action_errors));
 OA_self_tone_errors    = OA_self_tone_errors(~isnan(OA_self_tone_errors));
 OA_other_action_errors = OA_other_action_errors(~isnan(OA_other_action_errors));
 
-% Расчёт binding
+% Calculate binding efffect
 binding_self_action  = mean(OA_self_action_errors)  - mean(BA_errors);
 binding_self_tone    = mean(BT_errors)              - mean(OA_self_tone_errors);
 binding_other_action = mean(OA_other_action_errors) - mean(BA_errors);
 
-% Вывод
+% Your output
 fprintf('\n=== Intentional Binding: Subject 1 ===\n');
 fprintf('Self Action Binding:  %.2f ms\n', binding_self_action);
 fprintf('Self Tone Binding:    %.2f ms\n', binding_self_tone);
 fprintf('Other Action Binding: %.2f ms\n', binding_other_action);
 fprintf('Difference (Self - Other): %.2f ms\n', binding_self_action - binding_other_action);
 
-% Визуализация
+% Visualization
 figure;
 
-% Данные
+% 
 bindings = [binding_self_action, binding_other_action, binding_self_tone];
-labels = {'Self Action', 'Other Action', 'Self Tone'};
+labels = {'Self action', 'Other action', 'Self tone'};
 
-% Построение зелёной диаграммы
-b = bar(bindings, 'FaceColor', [0.2 0.6 0.2]);  % зелёный
-
-% Оформление
+% Create a visualisation of the values
+b = bar(bindings, 'FaceColor', [0.2 0.6 0.2]);  
 set(gca, 'XTickLabel', labels, 'FontSize', 12);
 ylabel('Binding (ms)', 'FontSize', 12);
 title('Intentional Binding — Self vs. Other', 'FontSize', 14);
